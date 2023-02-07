@@ -1,0 +1,76 @@
+pack jar into docker container
+1 creare file Dockerfile in the root of project
+ content  for file :
+
+FROM openjdk:11                                                                                                                                               
+VOLUME /tmp                                                                                                                                                   
+COPY build/libs/*SNAPSHOT.jar app.jar                                                                                                                         
+ENTRYPOINT ["java","-jar","/app.jar"]
+
+2 run command for build : 
+
+docker build -t packspringboot .  //packspringboot - name for new image
+
+3. list of images 
+docker images
+
+3. command for run
+docker run -p 8080:8080 packspringboot
+
+--------------------------------------------
+
+Commands from course
+
+    creation commands :
+	docker build - creates an image  (docker build -t <image new name> . )
+	docker run - instantiates a container from an image
+	docker build -t foreverbuild -f Dockerfile-build .   - with custom docker file
+
+    information commands:
+	docker images - list images in local registry
+	docker ps - list active containers
+	docker exec - run a command within a running container 
+	    docker exec -t -i foreverbuilder-app ls / 
+	    docker exec -t -i foreverbuilder-app /bin/sh
+	docker system - General Docker system inspection
+	docker logs <container name>
+	docker volume ls  - list of volumes
+
+    Tear-Down commands:
+	docker rmi - remove image (no active container)
+	docker stop - stop a running container
+	docker rm - remove a stopped container
+	docker volume rm <volume id> 
+	docker system - General Docker system inspection - remove all unused and orphan images
+	    docker system prune -a - delete all images if no running containers
+
+https://docs.docker.com/reference
+https://hub.docker.com
+
+docker login
+
+if error during building DockerFile in string 
+RUN ./mvnw package -DskipTests
+
+run this command first before executing "RUN ./mvnw package" :
+RUN dos2unix mvnw
+
+mount volume
+docker run -itd --name host-volume-app -v ${PWD}/my-host-folder:/container-folder alpine
+
+
+work with volumes
+docker run -itd --name host-volume-app -v ${PWD}/my-host-folder:/container-folder alpine  - run docker alpine linux twith connected volume (folder)
+docker run -itd --name anon-volume-app -v /container-folder alpine   - run docker alpine linux with anonimus volume
+docker run -itd --name named-volume-app -v bob:/container-folder alpine  - run docker alpine linux with specified volume name
+docker exec -it anon-volume-app touch /container-folder/anon-file
+docker run -p 8080:8080 -itd --name portdemo-app80 portdemo  -  run app on port
+
+work with repository
+docker tag docker.io/library/alpine:latest docker.io/kotovk/alpine:me
+docker push docker.io/kotovk/alpine:me
+docker pull docker.io/kotovk/alpine:me
+
+Other 
+docker login docker.io
+
