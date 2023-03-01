@@ -23,7 +23,7 @@ Commands from course
 
     creation commands :
 	docker build - creates an image  (docker build -t <image new name> . )
-	docker run - instantiates a container from an image
+	docker run - instantiates a container from an image  (docker run --name <containerName> <image>)
 	docker build -t foreverbuild -f Dockerfile-build .   - with custom docker file
 
     information commands:
@@ -73,4 +73,7 @@ docker pull docker.io/kotovk/alpine:me
 
 Other 
 docker login docker.io
+
+examples :
+docker run --name pgadmin -p 8180:80 -e 'PGADMIN_DEFAULT_EMAIL=user@domain.com' -e 'PGADMIN_DEFAULT_PASSWORD=SuperSecret' -d dpage/pgadmin4
 
