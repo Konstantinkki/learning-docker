@@ -1,3 +1,99 @@
 docker toolbox :
 docker image ls
-docker container ls
+docker container ls -a  (-a :  all containers)
+docker --version
+docker info
+docker --help
+docker image --help
+
+
+// Run container :
+set env : DOCKER_HIDE_LEGACY_COMMANDS=true docker --help
+docker container run -it jboss/wildfly    (-it -interactive mode)
+docker container run -d jboss/wildfly    (-d -detach/daemon mode) 
+docker container run -it --name web jboss/wildfly bash (run with bash)
+docker container run -d --name web -P jboss/wildfly  (-P - deffault port)
+docker container run -d --name web -p 8080:8080 jboss/wildfly  (-p - specified port)
+docker run -d -p 5000:5000 --restart always --name registry registry:2.6.0
+
+
+docker container stop web 
+docker container rm -f web      (force remove by name) 
+//remove all images/containers:
+1. docker image ls -aq
+	will see list of images Ids
+2. docker image rm -f $(docker image ls -aq)    ( aq : all Quite(only images ids))
+
+
+
+
+//logs
+docker container logs web -f (full logs)
+
+//tag 
+docker image web:1 web:latest
+
+//add volume
+docker container run -d --name web -p 8080:8080 -v `pwd`/webapp.war:/opt/jboss/wildfly/standalone/deployments/webapp.war jboss/wildfly ( copy webapp.war into docker)
+
+//build docker 
+docker image build -t helloworld .  (t : tag)
+docker image build  -t hellojava:2 . (rebuild same image with new version)
+docker history helloworld (view history of building docker)
+
+
+//copy files to docker image Docker file example
+-------------------------------
+FROM jboss/wildfly
+
+COPY webapp.war /opt/jboss/wildfly/standalone/deployments/webapp.war
+-------------------------------
+
+
+build docker with gradle / maven
+maven : https://github.com/fabric8io/docker-maven-plugin
+
+gradle : https://github.com/bmuschko/gradle-docker-plugin
+
+// push to docker hub
+docker image push my_hub_name/myimage:latest
+
+//push to my docker repo:
+1. tag image to necessary path name : docker image tag helloworld:latest localhost:5000/arungupta/helloworld:latest 
+2. push image : docker image push localhost:5000/arungupta/helloworld:latest
+
+//docker compose
+create file docker-compose.yml with content
+docker-compose up -d  - start docker compose 
+docker-compose ps - view list
+docker-compose logs -f - view logs (f - follow/scroll the logs)
+docker-compose down - stop all services in this compose-file
+
+docker-compose -p myapp up -d (-p : run in context named myapp)
+docker-compose -p myapp ps (list of services in context myapp because it invisible in common comtext)
+docker-compose -p myapp down  (stop apps in myapp context) 
+
+//docker swarm
+docker swarm --help
+docker swarm init
+docker swarm init --listen-addr <ip>
+docker swarm init --advertise-addr 192.168.99.100 (FOR WINDOWS )
+docker info
+docker swarm leave -f (off swarm)
+
+//swarm cluster
+docker-machine ls
+docker-machine ssh <name>
+docker-machine ssh manager1 "docker service ls" (execute command inside node manager1)
+docker-machine ssh manager
+docker service create --name web --replicas 3 -p 8080:8080 jboss/wildfly  (create 3 replicas)
+docker service ls
+docker service inspect web
+docker service ps web
+
+docker service create --name webapp --replicas 6 -p 8080:8080 arungupta/wildfly-app:1
+docker service ps webapp (list all prev created services)
+docker service update webapp --image arungupta/wildfly-app:2 --update-parallelism 2 --update-delay 10s
+
+
+
